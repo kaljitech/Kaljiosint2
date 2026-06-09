@@ -1,10 +1,10 @@
 # Kaljiosint2
 
-# 🪐 KALJIOSINT PRO (v3.5.0)
+# 🪐 KALJIOSINT (v3.5.0)
 
 > **Defensive Cyber Reconnaissance & Network Mapping Infrastructure Suite**
 
-`KALJIOSINT PRO` is a streamlined, modular Open Source Intelligence (OSINT) and network footprinting framework optimized for terminal environments. Engineered specifically to minimize screen-wrap on mobile CLI applications like Termux, it provides a unified, production-ready interface for security auditing, network perimeter mapping, and infrastructure protocol analysis.
+`KALJIOSINT` is a streamlined, modular Open Source Intelligence (OSINT) and network footprinting framework optimized for terminal environments. Engineered specifically to minimize screen-wrap on mobile CLI applications like Termux, it provides a unified, production-ready interface for security auditing, network perimeter mapping, and infrastructure protocol analysis.
 
 Using strict, non-intrusive metadata harvesting techniques, the platform interfaces directly with decentralized registries, global BGP routing records, and public DNS zones to aggregate critical infrastructure intelligence without leaving an intrusive active footprint on target systems.
 
