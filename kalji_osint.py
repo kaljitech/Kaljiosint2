@@ -6,6 +6,15 @@ import socket
 import json
 import urllib.request
 import urllib.error
+from datetime import datetime
+
+# Import Telephony Parsing Engines
+try:
+    import phonenumbers
+    from phonenumbers import geocoder, carrier, timezone
+except ImportError:
+    print("\n[!] Missing dependency: run 'pip install phonenumbers' in your terminal first.\n")
+    sys.exit(1)
 
 # --- FUTURISTIC NEON ANSI PALETTE ---
 CYAN    = "\033[38;5;51m"    # Electric Cyan
@@ -24,22 +33,41 @@ def show_banner():
     print(f"{WHITE}    ╠╩╗  ╠═╣  ║    ║  ║  ║ ║  ╚═╗  ║  ║║║   ║     {RESET}")
     print(f"{CYAN}    ╩ ╩  ╩ ╩  ╩═╝  ╚╝  ╚═╝  ╚═╝  ╩  ╝╚╝   ╩     {RESET}")
     print(f"{PURPLE}├──────────────────────────────────────────────────┤{RESET}")
-    print(f"{GRAY}  [►] FRAMEWORK: v2.0.0-PRO  //  SUBSYSTEM: ACTIVE   {RESET}")
+    print(f"{GRAY}  [►] FRAMEWORK: v3.0.0-PRO  //  SUBSYSTEM: ACTIVE   {RESET}")
     print(f"{PURPLE}└──────────────────────────────────────────────────┘{RESET}")
+
+def export_log(module_name, target, dataset):
+    os.makedirs("logs", exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"logs/{module_name.lower()}_{target.replace('.', '_').replace('+', '')}_{timestamp}.txt"
+    try:
+        with open(filename, "w", encoding="utf-8") as file:
+            file.write(f"==================================================\n")
+            file.write(f" KALJIOSINT PRO INTELLIGENCE REPORT              \n")
+            file.write(f" GENERATED: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            file.write(f" MODULE   : {module_name.upper()}\n")
+            file.write(f" TARGET   : {target}\n")
+            file.write(f"==================================================\n\n")
+            for line in dataset:
+                file.write(f"{line}\n")
+        print(f"\n{GRAY} [i] Session captured ──► {GREEN}{filename}{RESET}")
+    except Exception as e:
+        print(f"\n{RED} [X] Exporter Error: Unable to disk-write log telemetry: {e}{RESET}")
 
 def run_dns_lookup():
     show_banner()
     print(f"\n{CYAN}═╦╝ MODULE: PASSIVE DNS INTELLIGENCE{RESET}")
     print(f" ╚─► Target vectors query external passive route signatures.\n")
-    
     target = input(f"{YELLOW} [?] Enter Target Domain (e.g., google.com): {RESET}").strip()
     if not target: return
     clean_target = target.replace("http://", "").replace("https://", "").split('/')[0]
 
+    log_data = []
     print(f"\n{GRAY} ⚡ Resolving DNS cryptographic signatures...{RESET}")
     try:
         resolved_ip = socket.gethostbyname(clean_target)
         print(f" {GREEN}[✔] Target Correlated ──► IP: {WHITE}{resolved_ip}{RESET}")
+        log_data.append(f"Resolved IP: {resolved_ip}")
     except socket.gaierror:
         print(f" {RED}[╚═█] Core Resolution Failure: Host unrecognized.{RESET}")
         return
@@ -56,6 +84,8 @@ def run_dns_lookup():
                 print(f"{PURPLE}├──{GRAY} ASN/ORG    : {WHITE}{data.get('org')}{RESET}")
                 print(f"{PURPLE}├──{GRAY} COUNTRY    : {WHITE}{data.get('country')}{RESET}")
                 print(f"{PURPLE}└──{GRAY} LOCALITY   : {WHITE}{data.get('city')}{RESET}")
+                log_data.extend([f"ISP: {data.get('isp')}", f"Org: {data.get('org')}", f"Country: {data.get('country')}", f"City: {data.get('city')}"])
+                export_log("dns", clean_target, log_data)
             else:
                 print(f" {RED}[╚═█] Extraction Error: Metadata unreadable.{RESET}")
     except:
@@ -64,13 +94,12 @@ def run_dns_lookup():
 def run_header_extraction():
     show_banner()
     print(f"\n{CYAN}═╦╝ MODULE: HTTP SEC-HEADER EXTRACTION{RESET}")
-    print(f" ╚─► Probing runtime application architecture defenses.\n")
-    
     target = input(f"{YELLOW} [?] Enter Target Domain (e.g., google.com): {RESET}").strip()
     if not target: return
     clean_target = target.replace("http://", "").replace("https://", "").split('/')[0]
     final_url = f"http://{clean_target}"
 
+    log_data = []
     print(f"\n{GRAY} ⚡ Handshaking remote endpoints at {final_url}...{RESET}\n")
     try:
         req = urllib.request.Request(final_url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -79,28 +108,21 @@ def run_header_extraction():
             print(f"{PURPLE}┌───[ RAW METADATA EXTRACTED ]{RESET}")
             for key, value in headers.items():
                 print(f"{PURPLE}├──{CYAN} {key}{GRAY}: {WHITE}{value}{RESET}")
+                log_data.append(f"{key}: {value}")
             print(f"{PURPLE}└──[ END OF VECTOR DATA ]{RESET}")
-    except urllib.error.HTTPError as e:
-        print(f" {YELLOW}[!] Server Responded with Trapped Status Code: {e.code}{RESET}")
-        print(f"{PURPLE}┌───[ EXTRACTED ERROR HEADERS ]{RESET}")
-        for key, value in e.headers.items():
-            print(f"{PURPLE}├──{CYAN} {key}{GRAY}: {WHITE}{value}{RESET}")
-        print(f"{PURPLE}└──[ END OF DATA ]{RESET}")
+            export_log("headers", clean_target, log_data)
     except:
         print(f" {RED}[╚═█] Vector Error: Request dropped during handshake.{RESET}")
 
 def run_subdomain_scanner():
     show_banner()
     print(f"\n{CYAN}═╦╝ MODULE: ATTACK SURFACE CLUSTER MAP{RESET}")
-    print(f" ╚─► Bruteforcing zone delegation records via host resolution.\n")
-    
     target = input(f"{YELLOW} [?] Enter Target Domain (e.g., google.com): {RESET}").strip()
     if not target: return
     clean_target = target.replace("http://", "").replace("https://", "").split('/')[0]
 
     subdomains = ["www", "mail", "ftp", "admin", "blog", "shop", "dev", "api", "secure", "test"]
-    print(f"\n{GRAY} ⚡ Bruteforcing common infrastructural sub-allocations...{RESET}\n")
-    
+    log_data = []
     found_count = 0
     print(f"{PURPLE}┌───[ MAPPED ATTACHMENT CHANNELS ]{RESET}")
     for sub in subdomains:
@@ -108,11 +130,80 @@ def run_subdomain_scanner():
         try:
             sub_ip = socket.gethostbyname(sub_domain)
             print(f"{PURPLE}├──{GREEN} [LIVE] {WHITE}{sub_domain:<25} {GRAY}─► {CYAN}{sub_ip}{RESET}")
+            log_data.append(f"[LIVE] {sub_domain} -> {sub_ip}")
             found_count += 1
         except socket.gaierror:
             continue
-            
     print(f"{PURPLE}└───[ SCAN CONCLUDED. CORRELATED: {GREEN}{found_count}{PURPLE} PATHS ]{RESET}")
+    export_log("subdomains", clean_target, log_data)
+
+def run_port_scanner():
+    show_banner()
+    print(f"\n{CYAN}═╦╝ MODULE: COVERT INTERFACE PORT PROBER{RESET}")
+    target = input(f"{YELLOW} [?] Enter Target Domain or IP: {RESET}").strip()
+    if not target: return
+    clean_target = target.replace("http://", "").replace("https://", "").split('/')[0]
+
+    try:
+        target_ip = socket.gethostbyname(clean_target)
+        print(f" {GREEN}[✔] Target Address Matrix Locked ──► {WHITE}{target_ip}{RESET}\n")
+    except socket.gaierror:
+        print(f" {RED}[╚═█] Connection Error: Host identity untraceable.{RESET}")
+        return
+
+    critical_ports = {21: "FTP", 22: "SSH", 23: "Telnet", 25: "SMTP", 80: "HTTP", 443: "HTTPS", 8080: "HTTP-ALT"}
+    log_data = [f"Target IP: {target_ip}"]
+    print(f"{PURPLE}┌───[ HOST EDGE PORT MAP ]{RESET}")
+    for port, service in critical_ports.items():
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(1.0)
+        if s.connect_ex((target_ip, port)) == 0:
+            print(f"{PURPLE}├──{GREEN} [OPEN] {WHITE}PORT {port:<5} ─► {CYAN}{service}{RESET}")
+            log_data.append(f"[OPEN] Port {port} ({service})")
+        else:
+            print(f"{PURPLE}├──{GRAY} [CLOSED] PORT {port:<5} ─► {service}{RESET}")
+        s.close()
+    print(f"{PURPLE}└───[ PORT PROBE PIPELINE CONCLUDED ]{RESET}")
+    export_log("ports", clean_target, log_data)
+
+def run_phone_parser():
+    show_banner()
+    print(f"\n{CYAN}═╦╝ MODULE: TELEPHONY CARRIER MATRIX{RESET}")
+    print(f" ╚─► Parsing global ITU E.164 allocation structures.\n")
+    
+    raw_number = input(f"{YELLOW} [?] Enter Number (with Country Code, e.g., +260...): {RESET}").strip()
+    if not raw_number: return
+
+    print(f"\n{GRAY} ⚡ Checking international telecommunication records...{RESET}")
+    try:
+        # Standardize format parsing
+        phone_obj = phonenumbers.parse(raw_number, None)
+        
+        if not phonenumbers.is_valid_number(phone_obj):
+            print(f" {RED}[╚═█] Validation Error: String does not match structural allocation grids.{RESET}")
+            return
+            
+        # Extract purely systemic routing data blocks
+        country_zone = geocoder.description_for_number(phone_obj, "en")
+        carrier_name = carrier.name_for_number(phone_obj, "en")
+        time_zones  = timezone.time_zones_for_number(phone_obj)
+        
+        # Display the high-end matrix blocks
+        print(f"\n{PURPLE}┌───[ REGISTERED ROUTING METADATA ]{RESET}")
+        print(f"{PURPLE}├──{GRAY} COUNTRY RECORD : {WHITE}{country_zone if country_zone else 'Unknown/Global'}{RESET}")
+        print(f"{PURPLE}├──{GRAY} CARRIER / ISP  : {WHITE}{carrier_name if carrier_name else 'Landline / Managed Block'}{RESET}")
+        print(f"{PURPLE}└──{GRAY} BASE TIMEZONES : {WHITE}{', '.join(time_zones)}{RESET}")
+        
+        log_data = [
+            f"Parsed Number: {raw_number}",
+            f"Country: {country_zone}",
+            f"Carrier: {carrier_name}",
+            f"Timezones: {', '.join(time_zones)}"
+        ]
+        export_log("telecom", raw_number, log_data)
+        
+    except Exception as e:
+        print(f" {RED}[╚═█] Parsing Emergency: Unable to deconstruct string sequence: {e}{RESET}")
 
 def main():
     while True:
@@ -120,26 +211,26 @@ def main():
         print(f" {PURPLE}🪐 [01] ───►{WHITE} PASSIVE DNS INTELLIGENCE RECORDING{RESET}")
         print(f" {PURPLE}📡 [02] ───►{WHITE} HTTP APP SEC-HEADER EXTRACTION{RESET}")
         print(f" {PURPLE}🔮 [03] ───►{WHITE} SUBDOMAIN ATTACK SURFACE CLUSTER{RESET}")
+        print(f" {PURPLE}🛡️  [04] ───►{WHITE} COVERT INTERFACE PORT PROBER{RESET}")
+        print(f" {PURPLE}📱 [05] ───►{WHITE} TELEPHONY CARRIER ALLOCATION MATRIX{RESET}")
         print(f" {PURPLE}⚡ [00] ───►{RED} DISCONNECT TERMINAL PIPELINES{RESET}")
         print(f"\n{PURPLE}└──────────────────────────────────────────────────┘{RESET}")
         
         choice = input(f"\n {GREEN}Kaljiosint PRO ~> {RESET}").strip()
         
-        if choice in ["1", "01"]:
-            run_dns_lookup()
-            input(f"\n {GRAY}Press [ENTER] to return to core pipeline...{RESET}")
-        elif choice in ["2", "02"]:
-            run_header_extraction()
-            input(f"\n {GRAY}Press [ENTER] to return to core pipeline...{RESET}")
-        elif choice in ["3", "03"]:
-            run_subdomain_scanner()
-            input(f"\n {GRAY}Press [ENTER] to return to core pipeline...{RESET}")
+        if choice in ["1", "01"]: run_dns_lookup()
+        elif choice in ["2", "02"]: run_header_extraction()
+        elif choice in ["3", "03"]: run_subdomain_scanner()
+        elif choice in ["4", "04"]: run_port_scanner()
+        elif choice in ["5", "05"]: run_phone_parser()
         elif choice in ["0", "00"]:
             print(f"\n {RED}[!] Shuts down pipeline interfaces safely. Connection Closed.{RESET}\n")
             sys.exit(0)
         else:
             print(f"\n {RED}[X] Path Error: Input vector unauthorized.{RESET}")
             time.sleep(1)
+        if choice in ["1","01","2","02","3","03","4","04","5","05"]:
+            input(f"\n {GRAY}Press [ENTER] to return to core pipeline...{RESET}")
 
 if __name__ == "__main__":
     main()
