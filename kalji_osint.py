@@ -33,13 +33,14 @@ def show_banner():
     print(f"{WHITE}    ╠╩╗  ╠═╣  ║    ║  ║  ║ ║  ╚═╗  ║  ║║║   ║     {RESET}")
     print(f"{CYAN}    ╩ ╩  ╩ ╩  ╩═╝  ╚╝  ╚═╝  ╚═╝  ╩  ╝╚╝   ╩     {RESET}")
     print(f"{PURPLE}├──────────────────────────────────────────────────┤{RESET}")
-    print(f"{GRAY}  [►] FRAMEWORK: v3.0.0-PRO  //  SUBSYSTEM: ACTIVE   {RESET}")
+    print(f"{GRAY}  [►] FRAMEWORK: v3.5.0-PRO  //  SUBSYSTEM: ACTIVE   {RESET}")
     print(f"{PURPLE}└──────────────────────────────────────────────────┘{RESET}")
 
 def export_log(module_name, target, dataset):
     os.makedirs("logs", exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"logs/{module_name.lower()}_{target.replace('.', '_').replace('+', '')}_{timestamp}.txt"
+    clean_target = target.replace('.', '_').replace('+', '').replace(':', '_')
+    filename = f"logs/{module_name.lower()}_{clean_target}_{timestamp}.txt"
     try:
         with open(filename, "w", encoding="utf-8") as file:
             file.write(f"==================================================\n")
@@ -169,68 +170,13 @@ def run_port_scanner():
 def run_phone_parser():
     show_banner()
     print(f"\n{CYAN}═╦╝ MODULE: TELEPHONY CARRIER MATRIX{RESET}")
-    print(f" ╚─► Parsing global ITU E.164 allocation structures.\n")
-    
     raw_number = input(f"{YELLOW} [?] Enter Number (with Country Code, e.g., +260...): {RESET}").strip()
     if not raw_number: return
 
     print(f"\n{GRAY} ⚡ Checking international telecommunication records...{RESET}")
     try:
-        # Standardize format parsing
         phone_obj = phonenumbers.parse(raw_number, None)
-        
         if not phonenumbers.is_valid_number(phone_obj):
             print(f" {RED}[╚═█] Validation Error: String does not match structural allocation grids.{RESET}")
             return
-            
-        # Extract purely systemic routing data blocks
-        country_zone = geocoder.description_for_number(phone_obj, "en")
-        carrier_name = carrier.name_for_number(phone_obj, "en")
-        time_zones  = timezone.time_zones_for_number(phone_obj)
-        
-        # Display the high-end matrix blocks
-        print(f"\n{PURPLE}┌───[ REGISTERED ROUTING METADATA ]{RESET}")
-        print(f"{PURPLE}├──{GRAY} COUNTRY RECORD : {WHITE}{country_zone if country_zone else 'Unknown/Global'}{RESET}")
-        print(f"{PURPLE}├──{GRAY} CARRIER / ISP  : {WHITE}{carrier_name if carrier_name else 'Landline / Managed Block'}{RESET}")
-        print(f"{PURPLE}└──{GRAY} BASE TIMEZONES : {WHITE}{', '.join(time_zones)}{RESET}")
-        
-        log_data = [
-            f"Parsed Number: {raw_number}",
-            f"Country: {country_zone}",
-            f"Carrier: {carrier_name}",
-            f"Timezones: {', '.join(time_zones)}"
-        ]
-        export_log("telecom", raw_number, log_data)
-        
-    except Exception as e:
-        print(f" {RED}[╚═█] Parsing Emergency: Unable to deconstruct string sequence: {e}{RESET}")
-
-def main():
-    while True:
-        show_banner()
-        print(f" {PURPLE}🪐 [01] ───►{WHITE} PASSIVE DNS INTELLIGENCE RECORDING{RESET}")
-        print(f" {PURPLE}📡 [02] ───►{WHITE} HTTP APP SEC-HEADER EXTRACTION{RESET}")
-        print(f" {PURPLE}🔮 [03] ───►{WHITE} SUBDOMAIN ATTACK SURFACE CLUSTER{RESET}")
-        print(f" {PURPLE}🛡️  [04] ───►{WHITE} COVERT INTERFACE PORT PROBER{RESET}")
-        print(f" {PURPLE}📱 [05] ───►{WHITE} TELEPHONY CARRIER ALLOCATION MATRIX{RESET}")
-        print(f" {PURPLE}⚡ [00] ───►{RED} DISCONNECT TERMINAL PIPELINES{RESET}")
-        print(f"\n{PURPLE}└──────────────────────────────────────────────────┘{RESET}")
-        
-        choice = input(f"\n {GREEN}Kaljiosint PRO ~> {RESET}").strip()
-        
-        if choice in ["1", "01"]: run_dns_lookup()
-        elif choice in ["2", "02"]: run_header_extraction()
-        elif choice in ["3", "03"]: run_subdomain_scanner()
-        elif choice in ["4", "04"]: run_port_scanner()
-        elif choice in ["5", "05"]: run_phone_parser()
-        elif choice in ["0", "00"]:
-            print(f"\n {RED}[!] Shuts down pipeline interfaces safely. Connection Closed.{RESET}\n")
-            sys.exit(0)
-        else:
-            print(f"\n {RED}[X] Path Error: Input vector unauthorized.{RESET}")
-            time.sleep(1)
-        if choice in ["1","01","2","02","3","03","4","04","5","05"]:
-            input(f"\n {GRAY}Press [ENTER] to return to core pipeline...{RESET}")
-
-if __name__ == "__main__":
-    main()
+        country_zone = geocoder.description_for_number(
