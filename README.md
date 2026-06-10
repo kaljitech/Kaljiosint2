@@ -29,7 +29,7 @@ Using strict, non-intrusive metadata harvesting techniques, the platform interfa
 
 ```bash
 # Clone the infrastructure repository
-git clone [https://github.com/Kaljiosint2.git](https://github.com/Kaljiosint2.git)
+git clone [https://github.com/Kaljiosint2.git]
 
 # Navigate into the deployment matrix
 cd Kaljiosint2
