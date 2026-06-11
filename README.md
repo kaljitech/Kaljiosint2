@@ -1,4 +1,4 @@
-# Kaljiosint2
+# Kaljiosint
 
 # 🪐 KALJIOSINT (v3.5.0)
 
