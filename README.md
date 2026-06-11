@@ -1,42 +1,36 @@
-# Kaljiosint
+# 🛠️ KaljiOsint — Next-Gen Threat Intelligence Framework
 
-# 🪐 KALJIOSINT (v3.5.0)
+<p align="left">
+  <img src="https://img.shields.io/badge/Security-Auditing-red?style=for-the-badge&logo=shield" alt="Security">
+  <img src="https://img.shields.io/badge/OSINT-Framework-0052FF?style=for-the-badge&logo=linux" alt="OSINT">
+  <img src="https://img.shields.io/badge/Environment-Mobile--Friendly-success?style=for-the-badge&logo=android" alt="Environment">
+</p>
 
-> **Defensive Cyber Reconnaissance & Network Mapping Infrastructure Suite**
-
-`KALJIOSINT` is a streamlined, modular Open Source Intelligence (OSINT) and network footprinting framework optimized for terminal environments. Engineered specifically to minimize screen-wrap on mobile CLI applications like Termux, it provides a unified, production-ready interface for security auditing, network perimeter mapping, and infrastructure protocol analysis.
-
-Using strict, non-intrusive metadata harvesting techniques, the platform interfaces directly with decentralized registries, global BGP routing records, and public DNS zones to aggregate critical infrastructure intelligence without leaving an intrusive active footprint on target systems.
-
----
-
-### 📡 Core Subsystems & Features
-
-* **🔮 Subdomain Attack Surface Clustering:** Iterates through common infrastructure naming schemes to discover hidden target server branches and mapped allocation pathways.
-* **🛡️ Covert Interface Port Probing:** Analyzes target perimeter state matrices for open entry points and critical application interfaces (e.g., SSH, HTTP, FTP).
-* **🪐 Passive DNS Intelligence:** Resolves cryptographic signatures and queries decentralized registries for corporate ISP, ASN ownership, and physical routing telemetry.
-* **📱 Telephony Carrier Allocation Matrix:** Parses global ITU E.164 allocation records completely offline to determine country origin, base timezones, and network operator blocks.
-* **🌐 Direct IP Metadata Resolver:** Bypasses domain layers to query network blocks directly for Autonomous System mapping and regional geolocation data.
-* **💾 Automated Session Logging:** Generates neatly formatted, timestamped corporate intelligence reports saved locally into a dedicated `logs/` archive for threat matrix reporting.
+KaljiOsint is a high-performance, privacy-first Open Source Intelligence (OSINT) framework engineered for rapid, passive digital footprint mapping and threat surface analysis. Built for security researchers and threat analysts, it automates the discovery of exposed assets, identity linkage, and credential leakage across the clear and deep web.
 
 ---
 
-### ⚡ Architectural Flow
+## ⚡ Key Capabilities
 
+*   **🔍 Passive Digital Footprint Mapping** – Map an target's entire digital surface area without sending a single packet to the target system.
+*   **⛓️ Multi-Vector Identity Linkage** – Cross-reference usernames, emails, and phone numbers to discover hidden linkages across hundreds of platforms.
+*   **🔒 Credential Leakage Auditing** – Query threat intelligence databases to identify exposed credentials and past data breaches.
+*   **📱 Terminal-Optimized Architecture** – Engineered for low resource consumption, making it fully compatible with mobile terminal environments (like Termux) and lightweight Linux distros.
 
+---
 
-### 🚀 Implementation & Quick Start
+## 🚀 Quick Start
 
+### Prerequisites
+Ensure your environment is updated and has Python 3.x or Rust compilation tools configured.
+
+### Installation
 ```bash
-# Clone the infrastructure repository
-git clone [https://github.com/Kaljiosint2.git]
+# Clone the repository
+git clone [https://github.com/kaljitech/KaljiOsint.git](https://github.com/kaljitech/KaljiOsint.git)
 
-# Navigate into the deployment matrix
-cd Kaljiosint2
+# Navigate into the project directory
+cd KaljiOsint
 
-# Provision systemic dependencies
-pip install phonenumbers
-
-# Initialize the master interface pipeline
-python kalji_osint.py
-
+# Install required dependencies
+pip install -r requirements.txt
